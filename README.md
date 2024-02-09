@@ -22,7 +22,7 @@
 
 * Enhanced Performance
     - Leveraging cutting-edge technology to ensure faster processing times, improved efficiency, and seamless operation across multiple platforms.
-* User-Centric Design: 
+* User-Centric Design:
     - Intuitive interfaces and customizable options tailored to meet the needs of diverse user groups, enhancing accessibility and user engagement.
 
 ## How To Use
@@ -64,3 +64,10 @@ $ poetry install
 
 MIT
 
+## Stuff
+
+
+```bash
+# Find poetry venv with (If vs code can not find interpreter)
+poetry env info -p
+```
