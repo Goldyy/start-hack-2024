@@ -5,16 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Frontend",
+            "name": "Start",
             "type": "debugpy",
             "request": "launch",
-            "module": "hackathon.src.frontend.app"
-        },
-        {
-            "name": "Backend",
-            "type": "debugpy",
-            "request": "launch",
-            "module": "hackathon.src.backend.app"
+            "module": "hackathon.src.main"
         }
     ]
 }

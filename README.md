@@ -53,6 +53,9 @@ $ cd hackathon-template
 
 # Install dependencies
 $ poetry install
+
+# Install pre-commit hooks
+$ pre-commit install
 ```
 
 > **Note**
