@@ -74,3 +74,5 @@ MIT
 # Find poetry venv with (If vs code can not find interpreter)
 poetry env info -p
 ```
+
+* Create .env file on project root (next to this readme)
