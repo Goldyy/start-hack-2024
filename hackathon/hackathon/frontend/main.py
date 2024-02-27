@@ -1,7 +1,7 @@
 from nicegui import app, ui
 
-from hackathon.src.frontend.router import Router
-from hackathon.src.frontend.src.pages.home import show_home_page
+from hackathon.hackathon.frontend.router import Router
+from hackathon.hackathon.frontend.src.pages.home import show_home_page
 
 
 @ui.page("/")

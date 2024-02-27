@@ -2,8 +2,8 @@
 
 from dotenv import load_dotenv
 
-from hackathon.src.backend.main import start_backend
-from hackathon.src.frontend.main import start_frontend
+from hackathon.hackathon.backend.main import start_backend
+from hackathon.hackathon.frontend.main import start_frontend
 
 load_dotenv()
 
