@@ -37,6 +37,7 @@
 6. Accessing the services...
     - **Traefik Dashboard** <br> https://dev.ovo-hunters/traefik
     - **Backend Swagger API** <br> https://dev.ovo-hunters/backend/api/doc/
+    - **Keycloak Authentication** <br> https://dev.ovo-hunters/keycloak
 
 
 ## Development

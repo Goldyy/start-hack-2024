@@ -15,10 +15,10 @@ ENV PYTHONDONTWRITEBYTECODE 1
 # install dependencies
 RUN apt update 
 RUN pip install --upgrade pip
-COPY ./requirements.txt .
+COPY backend/requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY .env.prod .env
+COPY .env .env
 
 # copy project
-COPY src .
+COPY backend/src .
