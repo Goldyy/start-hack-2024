@@ -1,0 +1,115 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v2.10.5
+    container_name: ovo-hunters_traefik
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/ssl:/etc/traefik/ssl:ro
+      - ./traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - shared-data:/shared-data
+    labels:
+      #___ core configs
+      - traefik.enable=true
+      - traefik.http.routers.traefik.tls=true
+      - traefik.http.routers.traefik.entrypoints=https
+        #___ set traefik dashboard + API. The API is available at: dev.ovo-hunters/api/http/routers
+      - "traefik.http.routers.traefik.rule=Host(`dev.ovo-hunters`) && (PathPrefix(`/traefik`) || PathPrefix(`/api`))"
+      - "traefik.http.routers.traefik.service=api@internal"
+
+      - traefik.http.services.traefik.loadbalancer.server.port=8080
+
+      #___ use these middlewares
+      - "traefik.http.routers.traefik.middlewares=traefik-strip"
+        #___ specific middleware for traefik (it enables the dashboard at dev.ovo-hunters/traefik)
+      - "traefik.http.middlewares.traefik-strip.stripprefix.prefixes=/traefik"
+
+      # Enable this section to secure the traefik dashboard with username and password - deactive for now      
+      # - "traefik.http.routers.traefik.middlewares=traefik-strip,basic-auth"
+      # - "traefik.http.middlewares.basic-auth.basicauth.users=admin:$$apr1$$3HPq766I$$myK.lCR.QVruR/gBeLMex1"
+      # - "traefik.http.middlewares.basic-auth.basicauth.realm=tars"
+
+  backend:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:9081"
+    env_file:
+      - ./.env
+    volumes:
+      - ./backend/src:/usr/src/app
+      - shared-data:/usr/src/app/shared-data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - db
+    labels:
+      #___ core configs
+      - traefik.enable=true
+      - traefik.http.routers.backend.tls=true
+      - traefik.http.routers.backend.entrypoints=https
+
+      - "traefik.http.routers.backend.rule=Host(`dev.ovo-hunters`) && PathPrefix(`/backend`)"
+      - traefik.http.services.backend.loadbalancer.server.port=9081
+
+      #___ use these middlewares
+      - "traefik.http.routers.backend.middlewares=traefik-strip"
+      #___ specific middleware for backend (it enables backend at dev.ovo-hunters/backend)
+      - "traefik.http.middlewares.backend-strip.stripprefix.prefixes=/backend"
+
+  db:
+    image: postgres      
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_DB: backend
+      POSTGRES_USER: backend
+      POSTGRES_PASSWORD: 12W4zTpPA51jFieTko41
+    volumes:
+      - db:/var/lib/postgresql/data      
+
+  keycloak:
+    build:
+      context: ./keycloak/
+    env_file:
+      - ./.env
+    environment:
+      - KC_HTTP_RELATIVE_PATH=/keycloak
+      - KC_HOSTNAME_URL=https://dev.ovo-hunters/keycloak
+      - KC_HOSTNAME_ADMIN_URL=https://dev.ovo-hunters/keycloak
+    command: /opt/keycloak/bin/kc.sh start-dev --spi-theme-static-max-age=-1 --spi-theme-cache-themes=false --spi-theme-cache-templates=false
+    volumes:
+      - keycloak:/data
+    labels:
+      #___ core configs
+      - traefik.enable=true
+      - traefik.http.routers.keycloak.tls=true
+      - traefik.http.routers.keycloak.entrypoints=https
+
+      #___ router
+      - "traefik.http.routers.keycloak.rule=Host(`dev.ovo-hunters`) && PathPrefix(`/keycloak`)"
+      - traefik.http.services.keycloak.loadbalancer.server.port=8080
+
+      #___ use these middlewares
+      - "traefik.http.routers.keycloak.middlewares=traefik-strip"
+      #___ specific middleware for keycloak (it enables keycloak at dev.ovo-hunters/keycloak)
+      - "traefik.http.middlewares.keycloak-strip.stripprefix.prefixes=/keycloak"
+
+networks:
+  default:
+    name: ovo-hunters-dev
+
+volumes:
+  db:
+  keycloak:
+  shared-data:  
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./shared-data/

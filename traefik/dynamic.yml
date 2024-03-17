@@ -1,0 +1,17 @@
+tls:
+  stores:
+    default: {}
+  certificates:
+    - certFile: /etc/traefik/ssl/_wildcard.dev.ovo-hunteres.pem
+      keyFile: /etc/traefik/ssl/_wildcard.dev.ovo-hunters-key.pem
+      stores:
+        - default
+  
+  # This option would be used to enable client certificate authentication
+  # options:
+  #   default:
+  #     clientAuth:
+  #       caFiles:
+  #         - /etc/traefik/ssl/ca-cert.pem
+  #       clientAuthType: NoClientCert
+
