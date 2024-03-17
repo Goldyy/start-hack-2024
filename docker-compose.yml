@@ -72,12 +72,40 @@ services:
     volumes:
       - db:/var/lib/postgresql/data      
 
+  keycloak:
+    build:
+      context: ./keycloak/
+    env_file:
+      - ./.env
+    environment:
+      - KC_HTTP_RELATIVE_PATH=/keycloak
+      - KC_HOSTNAME_URL=https://dev.ovo-hunters/keycloak
+      - KC_HOSTNAME_ADMIN_URL=https://dev.ovo-hunters/keycloak
+    command: /opt/keycloak/bin/kc.sh start-dev --spi-theme-static-max-age=-1 --spi-theme-cache-themes=false --spi-theme-cache-templates=false
+    volumes:
+      - keycloak:/data
+    labels:
+      #___ core configs
+      - traefik.enable=true
+      - traefik.http.routers.keycloak.tls=true
+      - traefik.http.routers.keycloak.entrypoints=https
+
+      #___ router
+      - "traefik.http.routers.keycloak.rule=Host(`dev.ovo-hunters`) && PathPrefix(`/keycloak`)"
+      - traefik.http.services.keycloak.loadbalancer.server.port=8080
+
+      #___ use these middlewares
+      - "traefik.http.routers.keycloak.middlewares=traefik-strip"
+      #___ specific middleware for keycloak (it enables keycloak at dev.ovo-hunters/keycloak)
+      - "traefik.http.middlewares.keycloak-strip.stripprefix.prefixes=/keycloak"
+
 networks:
   default:
     name: ovo-hunters-dev
 
 volumes:
   db:
+  keycloak:
   shared-data:  
     driver: local
     driver_opts:

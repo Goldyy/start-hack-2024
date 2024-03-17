@@ -1,0 +1,74 @@
+pipeline {
+    agent any
+    environment {
+        //to access the variable on all stages
+        COMMIT_SHA_KEYCLOAK = ''
+    }
+    options {
+        skipDefaultCheckout(true)
+    }
+    stages {
+        stage('Cleanup Workspace') {
+            steps {
+                script {
+                    //delete all files in Workspace
+                    cleanWs()
+                    dir('keycloak_repo') {
+                        //checkout keycloak repo
+                        checkout scm
+
+                        //save HASH of last commit
+                        COMMIT_SHA_KEYCLOAK = sh(script: 'git rev-parse HEAD', returnStdout: true).trim() //safe
+                    }
+                }
+            }
+        }
+
+        stage('Build and save Docker image') {
+            steps {
+                dir('keycloak_repo') {
+                    sh 'chmod +x build-docker-image-keycloak.sh'
+                    //build docker image
+                    sh './build-docker-image-keycloak.sh'
+                }
+                dir('keycloak_repo/build') {
+                    //safe docker image
+                    sh 'docker save itsmhc_keycloak:latest -o itsmhc_keycloak:latest.tar'
+
+                    //copy docker image to central directory on server
+                    sh 'cp itsmhc_keycloak:latest.tar ${LATEST_BUILDS_DIR}/docker_images'
+
+                    //chmod so that the user sftpclient can access the file.
+                    sh 'chmod o+r ${LATEST_BUILDS_DIR}/docker_images/itsmhc_keycloak:latest.tar'
+                }
+                //delete docker image
+                sh 'docker image rm itsmhc_keycloak:latest'
+            }
+        }
+
+        stage('Add Git Hash to .env File of CI CD Repository') {
+            steps {
+                script {
+                    dir('CICD_Repo') {
+                        //checkout CICD repo
+                        git branch: 'main', credentialsId: 'gitlab-leon', url: 'https://gitlab.com/moritzvalerius/cicd.git'
+                    }
+
+                    dir('CICD_Repo/vast.ui-customer-kim') {
+                        //replace the old commit HASH with the new one
+                        sh "sed -i s/VITE_KEYCLOAK_HASH=.*/VITE_KEYCLOAK_HASH=${COMMIT_SHA_KEYCLOAK}/ .env"
+                    }
+                    dir('CICD_Repo') {
+                        //push the changes. Note that this triggers the CI CD Jenkins pipeline which zips all files to the server.
+                        withCredentials([gitUsernamePassword(credentialsId: 'gitlab_moritz',
+                                        gitToolName: 'git-tool')]) {
+                            sh 'git add .'
+                            sh 'git commit -m "build: modified KEYCKLOAK_HASH"'
+                            sh 'git push --set-upstream origin main'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
