@@ -1,5 +1,0 @@
-2024-03-17 10:50:57,950 INFO django.utils.autoreload Watching for file changes with StatReloader
-2024-03-17 10:51:05,183 INFO api.middlewares Request: GET /backend/api/doc/
-2024-03-17 10:51:05,214 INFO api.middlewares Response: 200
-2024-03-17 10:51:05,312 INFO api.middlewares Request: GET /backend/api/schema/
-2024-03-17 10:51:05,340 INFO api.middlewares Response: 200
