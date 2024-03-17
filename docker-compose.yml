@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
   traefik:
@@ -34,6 +34,43 @@ services:
       # - "traefik.http.routers.traefik.middlewares=traefik-strip,basic-auth"
       # - "traefik.http.middlewares.basic-auth.basicauth.users=admin:$$apr1$$3HPq766I$$myK.lCR.QVruR/gBeLMex1"
       # - "traefik.http.middlewares.basic-auth.basicauth.realm=tars"
+
+  backend:
+    build:
+      context: ./backend/
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:9081"
+    env_file:
+      - ./.env
+    volumes:
+      - ./backend/src:/usr/src/app
+      - shared-data:/usr/src/app/shared-data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - db
+    labels:
+      #___ core configs
+      - traefik.enable=true
+      - traefik.http.routers.backend.tls=true
+      - traefik.http.routers.backend.entrypoints=https
+
+      - "traefik.http.routers.backend.rule=Host(`dev.ovo-hunters`) && PathPrefix(`/backend`)"
+      - traefik.http.services.backend.loadbalancer.server.port=9081
+
+      #___ use these middlewares
+      - "traefik.http.routers.backend.middlewares=traefik-strip"
+      #___ specific middleware for backend (it enables backend at dev.ovo-hunters/backend)
+      - "traefik.http.middlewares.backend-strip.stripprefix.prefixes=/backend"
+
+  db:
+    image: postgres      
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_DB: backend
+      POSTGRES_USER: backend
+      POSTGRES_PASSWORD: 12W4zTpPA51jFieTko41
+    volumes:
+      - db:/var/lib/postgresql/data      
 
 networks:
   default:
