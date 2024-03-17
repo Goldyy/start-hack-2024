@@ -1,0 +1,29 @@
+global:
+  checkNewVersion: false
+
+log:
+  level: INFO
+
+entryPoints:
+  http:
+    address: ':80'
+    http:
+      redirections:
+        entryPoint:
+          to: https
+          scheme: https
+          permanent: true
+  https:
+    address: ':443'
+
+providers:
+  file:
+    filename: /etc/traefik/dynamic.yml
+    watch: true
+  docker:
+    endpoint: unix:///var/run/docker.sock
+    network: ovo-hunters-dev
+    exposedByDefault: false
+
+api:
+  insecure: true

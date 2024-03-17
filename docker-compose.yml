@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  traefik:
+    image: traefik:v2.10.5
+    container_name: ovo-hunters_traefik
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/ssl:/etc/traefik/ssl:ro
+      - ./traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - shared-data:/shared-data
+    labels:
+      #___ core configs
+      - traefik.enable=true
+      - traefik.http.routers.traefik.tls=true
+      - traefik.http.routers.traefik.entrypoints=https
+        #___ set traefik dashboard + API. The API is available at: dev.ovo-hunters/api/http/routers
+      - "traefik.http.routers.traefik.rule=Host(`dev.ovo-hunters`) && (PathPrefix(`/traefik`) || PathPrefix(`/api`))"
+      - "traefik.http.routers.traefik.service=api@internal"
+
+      - traefik.http.services.traefik.loadbalancer.server.port=8080
+
+      #___ use these middlewares
+      - "traefik.http.routers.traefik.middlewares=traefik-strip"
+        #___ specific middleware for traefik (it enables the dashboard at dev.ovo-hunters/traefik)
+      - "traefik.http.middlewares.traefik-strip.stripprefix.prefixes=/traefik"
+
+      # Enable this section to secure the traefik dashboard with username and password - deactive for now      
+      # - "traefik.http.routers.traefik.middlewares=traefik-strip,basic-auth"
+      # - "traefik.http.middlewares.basic-auth.basicauth.users=admin:$$apr1$$3HPq766I$$myK.lCR.QVruR/gBeLMex1"
+      # - "traefik.http.middlewares.basic-auth.basicauth.realm=tars"
+
+networks:
+  default:
+    name: ovo-hunters-dev
+
+volumes:
+  db:
+  shared-data:  
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./shared-data/
