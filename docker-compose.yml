@@ -69,7 +69,7 @@ services:
     environment:
       POSTGRES_DB: backend
       POSTGRES_USER: backend
-      POSTGRES_PASSWORD: 12W4zTpPA51jFieTko41
+      POSTGRES_PASSWORD: backend
     volumes:
       - db:/var/lib/postgresql/data      
 
