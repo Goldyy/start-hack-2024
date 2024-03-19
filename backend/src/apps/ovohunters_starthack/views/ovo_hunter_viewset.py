@@ -10,6 +10,12 @@ logger = logging.getLogger(__name__)
 
 class OvoHunterViewset(viewsets.ModelViewSet):
 
+    logger.debug("OvoHunterViewset")
+
+    def get_queryset(self):
+        logger.debug("Getting OVO-Hunters.")
+        return OvoHunterModel.objects.all()
+
     def perform_create(self, serializer):      
         logger.info("Adding OVO-Hunter.")  
         serializer.validated_data['is_impressed_by'] = "Moritz"        
@@ -30,3 +36,4 @@ class OvoHunterViewset(viewsets.ModelViewSet):
     queryset = OvoHunterModel.objects.all()
     serializer_class = OvoHunterSerializer
     http_method_names = ["get", "post", "put", "delete"]
+
