@@ -62,6 +62,43 @@ services:
       #___ specific middleware for backend (it enables backend at dev.ovo-hunters/backend)
       - "traefik.http.middlewares.backend-strip.stripprefix.prefixes=/backend"
 
+  frontend:
+    build:
+      context: ./frontend
+    command: npm run dev
+    env_file:
+      - ./.env
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend/app:/frontend/app
+      - ./frontend/components:/frontend/components
+      - ./frontend/lib:/frontend/lib
+    labels:
+      #___ core configs
+      - traefik.enable=true
+      - traefik.http.routers.frontend.tls=true
+      - traefik.http.routers.frontend.entrypoints=https
+
+      - traefik.http.routers.frontend.rule=Host(`dev.ovo-hunters`)
+      - traefik.http.services.frontend.loadbalancer.server.port=3000
+
+  # ubuntu:
+  #   image: ubuntu
+  #   env_file:
+  #     - ./.env
+  #   labels:
+  #     #___ core configs
+  #     - traefik.enable=true
+  #     - traefik.http.routers.python.tls=true
+  #     - traefik.http.routers.python.entrypoints=https
+
+  #     - "traefik.http.routers.python.rule=Host(`dev.ovo-hunters`)"
+  #     - traefik.http.services.python.loadbalancer.server.port=3000
+  #   depends_on:
+  #     - traefik
+  #   command: tail -f /dev/null
+
   db:
     image: postgres      
     ports:

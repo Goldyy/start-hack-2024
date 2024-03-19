@@ -23,7 +23,7 @@ RUN mkdir -p /opt/keycloak/data/import
 COPY keycloak-config/realm-tars.json /opt/keycloak/data/import/realm-tars.json
 
 # copy theme
-COPY theme/tars /opt/keycloak/themes/tars
+#COPY theme/tars /opt/keycloak/themes/tars
 
 # define entrypoint & command
 ENTRYPOINT ["/entrypoint.sh"]
