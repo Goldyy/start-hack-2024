@@ -19,15 +19,6 @@
     $ mkcert --cert-file traefik/ssl/_wildcard.dev.ovo-hunters.pem --key-file traefik/ssl/_wildcard.dev.ovo-hunters-key.pem '*.dev.ovo-hunters'
     ```
 
-4. Redirect dev.ovo-hunters to your host/dev...
-    ```bash
-    $ sudo nano /etc/hosts
-    ```
-    Then add the following lines to the file:
-    ```bash
-    # for ovo-hunters (hackathon starthack st. gallen 2024)
-    127.0.0.1 dev.ovo-hunters
-    ```
 
 5. Startup setup...
     ```bash
@@ -35,10 +26,9 @@
     ```
 
 6. Accessing the services...
-    - **Traefik Dashboard** <br> https://dev.ovo-hunters/traefik
-    - **Backend Swagger API** <br> https://dev.ovo-hunters/backend/api/doc/
-    - **Keycloak Authentication** <br> https://dev.ovo-hunters/keycloak
-    - **Frontend** <br> https://dev.ovo-hunters
+    - **Traefik Dashboard** <br> https://127.0.0.1/traefik
+    - **Backend Swagger API** <br> https://127.0.0.1/backend/api/doc/
+
 
 
 ## Development
