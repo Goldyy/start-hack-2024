@@ -13,7 +13,6 @@ LOG_LEVEL = os.getenv("API_LOG_LEVEL", "INFO")
 addLoggingLevel('TRACE', logging.DEBUG - 5)
 
 logging.getLogger("urllib3").setLevel(logging.WARNING)
-logging.getLogger("oauthlib").setLevel(logging.WARNING)
 
 #ensure that the log directory exists
 log_dir = os.path.dirname(LOG_DIR)
@@ -53,19 +52,13 @@ LOGGING = {
             "class": "logging.StreamHandler",
             "formatter": "verbose",
         },
-        "file": {
-            "level": LOG_LEVEL,
-            "class": "logging.FileHandler",
-            "filename": "/usr/src/app/shared-data/logs/backend.log",
-            "formatter": "verbose",
-        },
         "null": {
             "class": "logging.NullHandler",
         },    
     },
     "loggers": {
         "": {
-            "handlers": ["console","file"],
+            "handlers": ["console"],
             "level": LOG_LEVEL,
             "propagate": True,
         },
@@ -75,14 +68,14 @@ LOGGING = {
             "propagate": False
         },
         "django.request": {
-            "handlers": ["console","file"],
+            "handlers": ["console"],
             "level": LOG_LEVEL,
             "propagate": True,
         },
         "django.db.backends": {
             "handlers": ["null"],
             "level": LOG_LEVEL,
-            "propagate": True
+            "propagate": False
         },
     },
 }
@@ -117,9 +110,7 @@ INSTALLED_APPS = [
     # prometheus
     "django_prometheus",
     
-    # ovo-hunters custom apps
-    "apps.ovohunters_auth",
-    "apps.ovohunters_starthack",
+    "apps.location",
     
     # swagger
     "drf_spectacular",
@@ -148,8 +139,8 @@ ROOT_URLCONF = "api.urls"
 
 SPECTACULAR_SETTINGS = {
     "SWAGGER_UI_DIST": "//unpkg.com/swagger-ui-dist@5.10.0", # default
-    "TITLE": "OVO-Hunters Awesome App",
-    "DESCRIPTION": "OVO-Hunters Awesome App",
+    "TITLE": "notime backend",
+    "DESCRIPTION": "This backend serves the Augmented Reality App enabling visually impaired people to navigate though supermarkets. It leverages the CISCO Firehouse API combined with Data of Supermarkets and the users camera. \n \n Created with passion by Niklas Koch, Moritz Valerius, Lukas Goldschmidt und Leon Schmidt at the STARTHACK 2024 Hackathon.",
     "VERSION": "1.0.0",
     'OAUTH2_FLOWS': ['implicit'],
     'OAUTH2_AUTHORIZATION_URL': 'http://127.0.0.1:9080/realms/tars/protocol/openid-connect/auth',   

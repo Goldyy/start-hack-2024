@@ -13,14 +13,13 @@ services:
       - ./traefik/ssl:/etc/traefik/ssl:ro
       - ./traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
       - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
-      - shared-data:/shared-data
     labels:
       #___ core configs
       - traefik.enable=true
       - traefik.http.routers.traefik.tls=true
       - traefik.http.routers.traefik.entrypoints=https
         #___ set traefik dashboard + API. The API is available at: dev.ovo-hunters/api/http/routers
-      - "traefik.http.routers.traefik.rule=Host(`dev.ovo-hunters`) && (PathPrefix(`/traefik`) || PathPrefix(`/api`))"
+      - "traefik.http.routers.traefik.rule=(PathPrefix(`/traefik`) || PathPrefix(`/api`))"
       - "traefik.http.routers.traefik.service=api@internal"
 
       - traefik.http.services.traefik.loadbalancer.server.port=8080
@@ -44,7 +43,6 @@ services:
       - ./.env
     volumes:
       - ./backend/src:/usr/src/app
-      - shared-data:/usr/src/app/shared-data
       - /var/run/docker.sock:/var/run/docker.sock:ro
     depends_on:
       - db
@@ -54,7 +52,7 @@ services:
       - traefik.http.routers.backend.tls=true
       - traefik.http.routers.backend.entrypoints=https
 
-      - "traefik.http.routers.backend.rule=Host(`dev.ovo-hunters`) && PathPrefix(`/backend`)"
+      - "traefik.http.routers.backend.rule=PathPrefix(`/backend`)"
       - traefik.http.services.backend.loadbalancer.server.port=9081
 
       #___ use these middlewares
@@ -62,42 +60,6 @@ services:
       #___ specific middleware for backend (it enables backend at dev.ovo-hunters/backend)
       - "traefik.http.middlewares.backend-strip.stripprefix.prefixes=/backend"
 
-  frontend:
-    build:
-      context: ./frontend
-    command: npm run dev
-    env_file:
-      - ./.env
-    ports:
-      - 3000:3000
-    volumes:
-      - ./frontend/app:/frontend/app
-      - ./frontend/components:/frontend/components
-      - ./frontend/lib:/frontend/lib
-    labels:
-      #___ core configs
-      - traefik.enable=true
-      - traefik.http.routers.frontend.tls=true
-      - traefik.http.routers.frontend.entrypoints=https
-
-      - traefik.http.routers.frontend.rule=Host(`dev.ovo-hunters`)
-      - traefik.http.services.frontend.loadbalancer.server.port=3000
-
-  # ubuntu:
-  #   image: ubuntu
-  #   env_file:
-  #     - ./.env
-  #   labels:
-  #     #___ core configs
-  #     - traefik.enable=true
-  #     - traefik.http.routers.python.tls=true
-  #     - traefik.http.routers.python.entrypoints=https
-
-  #     - "traefik.http.routers.python.rule=Host(`dev.ovo-hunters`)"
-  #     - traefik.http.services.python.loadbalancer.server.port=3000
-  #   depends_on:
-  #     - traefik
-  #   command: tail -f /dev/null
 
   db:
     image: postgres      
@@ -110,33 +72,6 @@ services:
     volumes:
       - db:/var/lib/postgresql/data      
 
-  keycloak:
-    build:
-      context: ./keycloak/
-    env_file:
-      - ./.env
-    environment:
-      - KC_HTTP_RELATIVE_PATH=/keycloak
-      - KC_HOSTNAME_URL=https://dev.ovo-hunters/keycloak
-      - KC_HOSTNAME_ADMIN_URL=https://dev.ovo-hunters/keycloak
-    command: /opt/keycloak/bin/kc.sh start-dev --spi-theme-static-max-age=-1 --spi-theme-cache-themes=false --spi-theme-cache-templates=false
-    volumes:
-      - keycloak:/data
-    labels:
-      #___ core configs
-      - traefik.enable=true
-      - traefik.http.routers.keycloak.tls=true
-      - traefik.http.routers.keycloak.entrypoints=https
-
-      #___ router
-      - "traefik.http.routers.keycloak.rule=Host(`dev.ovo-hunters`) && PathPrefix(`/keycloak`)"
-      - traefik.http.services.keycloak.loadbalancer.server.port=8080
-
-      #___ use these middlewares
-      - "traefik.http.routers.keycloak.middlewares=traefik-strip"
-      #___ specific middleware for keycloak (it enables keycloak at dev.ovo-hunters/keycloak)
-      - "traefik.http.middlewares.keycloak-strip.stripprefix.prefixes=/keycloak"
-
 networks:
   default:
     name: ovo-hunters-dev
@@ -144,9 +79,3 @@ networks:
 volumes:
   db:
   keycloak:
-  shared-data:  
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: ./shared-data/

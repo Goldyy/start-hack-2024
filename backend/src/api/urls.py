@@ -31,8 +31,7 @@ schema_view = get_schema_view(
 urlpatterns = [    
     path("", include("django_prometheus.urls")),
     
-    path("backend/api/ovo-hunters_auth/", include("apps.ovohunters_auth.urls")),
-    path("backend/api/ovo-hunters_starthack/", include("apps.ovohunters_starthack.urls")),
+    path("backend/api/location/", include("apps.location.urls")),
     
     path('backend/api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('backend/api/doc/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
