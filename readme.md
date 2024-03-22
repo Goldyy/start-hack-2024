@@ -23,7 +23,7 @@ The Challenge can be found here: [Cisco_STARTHACK24](https://github.com/START-Ha
 ## Who are we?
  - *Lukas Goldschmidt* [LinkedIn Profile](https://www.linkedin.com/in/lukas-goldschmidt/)
  - *Niklas Keller*
- - *Leon Schmidt*
+ - *Leon Schmidt* [LinkedIn Profile](https://www.linkedin.com/in/lukas-goldschmidt/)
  - *Moritz Valerius* [LinkedIn Profile](https://www.linkedin.com/in/moritzvalerius/)
 
     
@@ -48,7 +48,7 @@ The necessary technologies are available. Our solution is divided into four appr
 4. machine learning enables targeted recognition and guidance of the mobile phone to the product being searched for.   
 
 ## Our prototype
-But see for yourself. Here is a video showing how our prototype guides a visually impaired person through a supermarket to the milk carton he is looking for (Video - StartHack24.mp4). 
+But see for [yourself](https://youtu.be/-VXM2gKVRKs). Here is a video showing how our prototype guides a visually impaired person through a supermarket to the milk carton he is looking for (Video - StartHack24.mp4). 
 
 The CISCO devices know the spatial structure of the supermarket and can determine the location of the blind person. 
 
@@ -60,11 +60,11 @@ When they arrive at the shelf, the phone scans the shelves and accurately marks 
 
 ## Technical background
 
-### OCR-based Product Recognition from Price Tags:
+### OCR and AI-based Product Recognition from Price Tags:
 The implementation of optical character recognition (OCR) for identifying products through price tags was not included in the prototype primarily due to time constraints. However, integrating an OCR library or API, such as Tesseract, into the application could facilitate this feature. By training the OCR system to recognize characters on price tags, the application would be able to identify products on shelves based on their price labels.
 
 ### Localization of Products through Supermarket Inventory System Integration
-The integration with the supermarket's inventory system to localize products in real-time was not implemented within the prototype due to the lack of an interface with an existing supermarket inventory system. However, a suggested approach would involve developing an interface to connect with the supermarket's inventory database using APIs or web scraping techniques. This would enable the application to retrieve up-to-date information about the location of products within the store, thus providing accurate navigation guidance for users.
+The integration with the supermarket's inventory system to localize products in real-time was not implemented within the prototype due to the lack of an interface with an existing supermarket inventory system. During interviews with managers of the industrie we found out, that the large grocery chains store accurate data about the exact position of their products for each store.A suggested approach would involve developing an interface to connect with the supermarket's inventory database using APIs or web scraping techniques. This would enable the application to retrieve up-to-date information about the location of products within the store, thus providing accurate navigation guidance for users.
 
 ### Simulation of User's Positional Data
 Due to the unavailability of real-time positional data, the prototype utilized simulated positional data of the user within the building. This simulated data allowed the application to demonstrate navigation functionality within the indoor environment. While not reflective of actual user positions, this approach served to illustrate how the application could guide individuals to desired products within a store setting. Integrating with real-time positioning systems in future iterations would enhance the accuracy and effectiveness of the navigation feature.
