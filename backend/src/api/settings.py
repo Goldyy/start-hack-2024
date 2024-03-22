@@ -139,8 +139,8 @@ ROOT_URLCONF = "api.urls"
 
 SPECTACULAR_SETTINGS = {
     "SWAGGER_UI_DIST": "//unpkg.com/swagger-ui-dist@5.10.0", # default
-    "TITLE": "notime backend",
-    "DESCRIPTION": "This backend serves the Augmented Reality App enabling visually impaired people to navigate though supermarkets. It leverages the CISCO Firehouse API combined with Data of Supermarkets and the users camera. \n \n Created with passion by Niklas Koch, Moritz Valerius, Lukas Goldschmidt und Leon Schmidt at the STARTHACK 2024 Hackathon.",
+    "TITLE": "NavEye Backend API",
+    "DESCRIPTION": "This backend serves the Augmented Reality App NavEye by enabling visually impaired people to navigate though supermarkets. It leverages the CISCO Firehouse API combined with Data of Supermarkets and the users camera. \n \n Created with passion by Niklas Koch, Moritz Valerius, Lukas Goldschmidt und Leon Schmidt (Team no-time) at the STARTHACK 2024 Hackathon.",
     "VERSION": "1.0.0",
     'OAUTH2_FLOWS': ['implicit'],
     'OAUTH2_AUTHORIZATION_URL': 'http://127.0.0.1:9080/realms/tars/protocol/openid-connect/auth',   
