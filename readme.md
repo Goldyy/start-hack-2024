@@ -35,3 +35,5 @@
 
 ### Backend
 1. There's a requirements.txt in backend/. Feel free to use conda or venv for your development.<br>https://code.visualstudio.com/docs/python/environments
+
+![Video](StartHack24.mp4)
