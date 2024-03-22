@@ -60,12 +60,6 @@ When they arrive at the shelf, the phone scans the shelves and accurately marks 
 
 ## Technical background
 
-
-- Technischer Hintergrund
-    - Was ist fake?
-- Selling
-- Roadmap
-
 ### OCR-based Product Recognition from Price Tags:
 The implementation of optical character recognition (OCR) for identifying products through price tags was not included in the prototype primarily due to time constraints. However, integrating an OCR library or API, such as Tesseract, into the application could facilitate this feature. By training the OCR system to recognize characters on price tags, the application would be able to identify products on shelves based on their price labels.
 
